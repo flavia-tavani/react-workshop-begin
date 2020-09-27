@@ -1,26 +1,41 @@
-import React from 'react';
-import logo from './logo.svg';
+import React, {useEffect, useState, useRef} from 'react';
 import './App.css';
+import 'bootstrap/dist/css/bootstrap.min.css'
+import 'font-awesome/css/font-awesome.min.css'
+import Axios from "axios";
+import {List} from './components/List'
+import {User} from './interfaces/User'
 
-function App() {
-  return (
-    <div className="App">
-      <header className="App-header">
-        <img src={logo} className="App-logo" alt="logo" />
-        <p>
-          Edit <code>src/App.tsx</code> and save to reload.
-        </p>
-        <a
-          className="App-link"
-          href="https://reactjs.org"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          Learn React
-        </a>
-      </header>
-    </div>
-  );
-}
+export const App: React.FC = () => {
+
+    const [users, setUsers] = useState<User[]>([])
+    const inputEl = useRef<HTMLInputElement>(null);
+
+    useEffect(() => {
+        Axios.get<User[]>('https://jsonplaceholder.typicode.com/users')
+            .then(res => setUsers(res.data))
+    }, [])
+
+    function SubmitHandler(event: React.FormEvent<HTMLFormElement>){
+        event.preventDefault();
+        const user = inputEl.current?.value;
+    }
+
+    return (
+        <div className="container mt-2">
+            <form onSubmit={SubmitHandler}>
+                <input className="form-control" type="text" ref={inputEl} name="user"/>
+                <button className="btn btn-primary" type="submit">Save</button>
+            </form>
+
+            <select className="form-control">
+                <option>1</option>
+                <option>2</option>
+                <option>3</option>
+            </select>
+            <List data={users}/>
+        </div>
+    )
+};
 
 export default App;
